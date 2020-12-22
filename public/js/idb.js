@@ -5,14 +5,14 @@ let db;
 const request = indexedDB.open('budget_tracker', 1);
 
 // this event will emit if the db version changes
-request.onupgradeneeded = function(event) {
+request.onupgradeneeded = function (event) {
     // save a ref to the db
     const db = event.target.result;
     // create an object store called `new_budget`
     db.createObjectStore('new_budget', { autoIncrement: true });
 };
 // upon a successful 
-request.onsuccess = function(event) {
+request.onsuccess = function (event) {
     // when db is successfully created with its object store (from onupgradedneeded event above) or simply established a connection, save reference to db in global variable
     db = event.target.result;
 
@@ -22,7 +22,7 @@ request.onsuccess = function(event) {
     }
 };
 
-request.onerror = function(event) {
+request.onerror = function (event) {
     // log error here
     console.log(event.target.errorCode);
 };
@@ -51,17 +51,17 @@ function updateTracker() {
     const getAll = budgetObjectStore.getAll();
 
     // upon a successful .getAll() execution, run this function
-    getAll.onsuccess = function() {
+    getAll.onsuccess = function () {
         // if there was data in indexedDb's store, let's send it to the api server
         if (getAll.result.length > 0) {
             fetch('/api/transaction', {
-                    method: 'POST',
-                    body: JSON.stringify(getAll.result),
-                    headers: {
-                        Accept: 'application/json, text/plain, */*',
-                        'Content-Type': 'application/json'
-                    }
-                })
+                method: 'POST',
+                body: JSON.stringify(getAll.result),
+                headers: {
+                    Accept: 'application/json, text/plain, */*',
+                    'Content-Type': 'application/json'
+                }
+            })
                 .then(response => response.json())
                 .then(serverResponse => {
                     if (serverResponse.message) {
